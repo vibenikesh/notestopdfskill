@@ -1,0 +1,132 @@
+# Notes to PDF
+
+A background service that automatically mirrors all your Apple Notes to PDF files on disk — one PDF per note, folder structure preserved.
+
+Runs every 15 minutes via macOS launchd and auto-starts on login. Handles create, update, rename, folder move, delete, and orphan cleanup.
+
+---
+
+## Features
+
+- Converts all Apple Notes to PDFs automatically
+- Preserves Notes folder structure on disk
+- Detects and syncs: new notes, edits, renames, folder moves, and deletes
+- Extracts `#hashtag` tags from note body and renders them as chips in the PDF
+- Embeds images (base64 data URIs) with 200MB buffer and 60s timeout protection
+- Clickable hyperlinks preserved in PDF output
+- Handles filename collisions with `_(2)` suffix
+- State keyed by CoreData note ID — stable across renames
+- Skips "Recently Deleted" folder always
+- Safety gate: delete sync skipped entirely if Notes returns 0 notes (guards against read failure wiping everything)
+
+---
+
+## Requirements
+
+- macOS (Apple Notes + AppleScript)
+- Node.js v18+
+- npm
+
+---
+
+## Installation
+
+```bash
+git clone https://github.com/vibenikesh/notestopdfskill.git
+cd notestopdfskill
+npm install
+```
+
+### Set up launchd (auto-run every 15 minutes)
+
+1. Copy the plist to LaunchAgents:
+
+```bash
+cp com.user.notes-to-pdf.plist ~/Library/LaunchAgents/
+```
+
+2. Load it:
+
+```bash
+launchctl load ~/Library/LaunchAgents/com.user.notes-to-pdf.plist
+```
+
+PDFs will be written to `~/Downloads/Notes to PDF/`, mirroring your Notes folder structure.
+
+---
+
+## Usage
+
+```bash
+# Force a sync right now
+node src/index.js
+
+# Check service health + recent logs
+bash scripts/status.sh
+
+# Scan for orphaned PDFs (PDFs with no matching note)
+node scripts/orphan-report.js
+
+# Delete orphaned PDFs
+node scripts/orphan-report.js --delete
+
+# Watch the live log
+tail -f ~/notes-to-pdf/logs/notes-to-pdf.log
+```
+
+---
+
+## Project Structure
+
+| File | Purpose |
+|------|---------|
+| `src/index.js` | Main orchestrator — handles new, rename, update, delete cases |
+| `src/notes-reader.js` | AppleScript bridge — reads all note metadata and body |
+| `src/pdf-generator.js` | PDF generation (collision-safe for new notes; exact path for updates/renames) |
+| `src/template.js` | HTML template for PDF layout and styling |
+| `src/state.js` | Change detection keyed by CoreData ID |
+| `src/logger.js` | Timestamped log appender with 500-line cap |
+| `scripts/status.sh` | Service health check + recent logs |
+| `scripts/orphan-report.js` | Scan for and optionally delete orphaned PDFs |
+
+---
+
+## Log Format
+
+Each sync run appends a summary line:
+
+```
+Sync complete in Xs — Created: N | Updated: N | Renamed: N | Deleted: N | Skipped: N | Errors: N
+```
+
+---
+
+## Performance
+
+- **First run**: ~8 minutes (all notes read and PDFs generated)
+- **Subsequent runs**: 5–12 seconds (only changed notes processed)
+- AppleScript reads metadata in batch — avoids per-note loops that took 6+ minutes
+- Note body is only fetched for notes that have changed (lazy fetch)
+
+---
+
+## Tech Stack
+
+- Node.js, npm
+- [puppeteer](https://github.com/puppeteer/puppeteer) — headless Chrome for PDF generation
+- [sanitize-html](https://github.com/apostrophecms/sanitize-html) — HTML sanitisation
+- osascript via temp `.applescript` files (avoids shell escaping bugs)
+
+---
+
+## Known Quirks
+
+- Two folders with the same name (e.g. "Learning") are both processed correctly
+- If state keys don't start with `x-coredata://`, state is wiped and rebuilt — expect a one-time ~8 min run
+- AppleScript `id of noteList` (variable) fails; must use `id of every note in aFolder` directly
+
+---
+
+## License
+
+MIT
