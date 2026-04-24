@@ -45,3 +45,7 @@ else
   echo "  (no log file yet)"
 fi
 echo ""
+
+# Generate HTML log file
+node "$HOME/notes-to-pdf/scripts/generate-log.js" 2>/dev/null && echo "  HTML log : ~/Downloads/Notes to PDF/Log.html"
+echo ""
