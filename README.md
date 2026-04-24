@@ -76,6 +76,68 @@ tail -f ~/notes-to-pdf/logs/notes-to-pdf.log
 
 ---
 
+## Exporting Notes
+
+The export script reads already-generated PDFs from state and copies or zips them to a directory, or sends them via email. It does **not** re-generate any PDFs — run a sync first if needed.
+
+### Export to a directory
+
+```bash
+# Export all notes → ~/Downloads/Notes Export/ (auto-zipped if 2+ files)
+node scripts/export.js --all
+
+# Export to a specific directory
+node scripts/export.js --all --out ~/Desktop/my-notes
+
+# Export a single folder
+node scripts/export.js --folder Work
+
+# Export multiple folders (zipped together)
+node scripts/export.js --folder Work Personal
+
+# Export specific notes by title
+node scripts/export.js --notes "Meeting Notes" "Project Plan"
+
+# Force a zip even for a single file
+node scripts/export.js --folder Work --zip
+```
+
+### Export via email (macOS)
+
+```bash
+# Email all notes
+node scripts/export.js --all --email you@example.com
+
+# Email a specific folder
+node scripts/export.js --folder Work --email colleague@example.com
+```
+
+Email is sent via the macOS `mail` command using your system Mail account. A single PDF is attached directly; multiple PDFs are zipped first. Subject is set automatically (e.g. `Notes Export – Folder: Work`).
+
+### Scope flags
+
+| Flag | Description |
+|------|-------------|
+| `--all` | Export every tracked note |
+| `--folder <name> [<name2> ...]` | Export all notes in one or more folders |
+| `--notes <title> [<title2> ...]` | Export specific notes by exact title (case-insensitive) |
+
+### Destination flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--out <dir>` | `~/Downloads/Notes Export` | Write PDF or zip here |
+| `--email <address>` | — | Send via macOS `mail` command |
+| `--zip` | — | Force zip even for a single file |
+
+**Notes:**
+- PDFs missing on disk are skipped with a warning; export continues with the valid subset.
+- Zip filename format: `notes-export-YYYY-MM-DD.zip`
+- Zip entries are stored as `FolderName/filename.pdf` to avoid cross-folder name collisions.
+- Output directory is created automatically if it does not exist.
+
+---
+
 ## Project Structure
 
 | File | Purpose |
