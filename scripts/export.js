@@ -26,7 +26,9 @@ const { loadState } = require('../src/state');
 const execFileAsync = promisify(execFile);
 
 const DEFAULT_OUT_DIR = path.join(os.homedir(), 'Downloads', 'Notes Export');
-const TODAY = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
+const now = new Date();
+const TODAY = now.toISOString().slice(0, 10); // YYYY-MM-DD
+const TIMESTAMP = TODAY + '-' + now.toTimeString().slice(0, 8).replace(/:/g, ''); // YYYY-MM-DD-HHmmss
 
 // ── Argument parsing ──────────────────────────────────────────────────────────
 
@@ -149,7 +151,7 @@ function copyFile(src, destDir) {
 function createZip(entries, outDir) {
   return new Promise((resolve, reject) => {
     ensureDir(outDir);
-    const zipPath = path.join(outDir, `notes-export-${TODAY}.zip`);
+    const zipPath = path.join(outDir, `notes-export-${TIMESTAMP}.zip`);
     const output = fs.createWriteStream(zipPath);
     const archive = archiver('zip', { zlib: { level: 9 } });
 
