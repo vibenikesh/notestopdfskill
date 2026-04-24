@@ -173,7 +173,7 @@ function createZip(entries, outDir) {
 /**
  * Send an email with a single file attachment.
  *
- * macOS implementation using the system `mail` command.
+ * macOS implementation using AppleScript via Mail.app.
  * To add Windows/SMTP support: replace this function body with a nodemailer
  * call keeping the same signature (subject, attachmentPath, address).
  *
@@ -183,8 +183,24 @@ function createZip(entries, outDir) {
  * @returns {Promise<void>}
  */
 async function sendEmail(subject, attachmentPath, address) {
-  // execFile avoids shell injection from note titles containing special characters
-  await execFileAsync('mail', ['-s', subject, '-a', path.resolve(attachmentPath), address]);
+  const absPath = path.resolve(attachmentPath);
+  // Escape values for AppleScript string literals
+  const safeSubject = subject.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const safePath = absPath.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+  const safeAddress = address.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
+
+  const script = `
+tell application "Mail"
+  set newMessage to make new outgoing message with properties {subject:"${safeSubject}", visible:false}
+  tell newMessage
+    make new to recipient with properties {address:"${safeAddress}"}
+    make new attachment with properties {file name:POSIX file "${safePath}"}
+  end tell
+  send newMessage
+end tell
+  `.trim();
+
+  await execFileAsync('osascript', ['-e', script]);
 }
 
 // ── Subject builder ───────────────────────────────────────────────────────────
