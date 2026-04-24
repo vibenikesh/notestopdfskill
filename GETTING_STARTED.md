@@ -16,8 +16,7 @@ Open your terminal and run:
 
 ```bash
 mkdir -p ~/.claude/skills/notes-to-pdf
-curl -o ~/.claude/skills/notes-to-pdf/SKILL.md \
-  https://raw.githubusercontent.com/vibenikesh/notestopdfskill/main/skill/SKILL.md
+curl -o ~/.claude/skills/notes-to-pdf/SKILL.md https://raw.githubusercontent.com/vibenikesh/notestopdfskill/main/skill/SKILL.md
 ```
 
 That's it. You never need to do this again.
@@ -26,7 +25,11 @@ That's it. You never need to do this again.
 
 ---
 
-## Step 2 — Open Claude Code and try it
+## Step 2 — Quit and restart Claude Code
+
+Quit Claude Code completely and reopen it. This is required to pick up the newly installed skill.
+
+## Step 3 — Try it
 
 In Claude Code, just type `/notes-to-pdf` and hit Enter. Not sure what to type? Just run it with no arguments and it will guide you step by step.
 
@@ -257,3 +260,4 @@ Just run the skill without any arguments:
 ```
 
 It will ask you friendly questions to figure out what you'd like to do — no experience needed.
+
