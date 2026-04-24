@@ -1,0 +1,5 @@
+node_modules/
+state/notes-state.json
+logs/
+*.log
+.DS_Store

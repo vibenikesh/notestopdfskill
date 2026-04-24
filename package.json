@@ -1,0 +1,14 @@
+{
+  "name": "notes-to-pdf",
+  "version": "1.0.0",
+  "description": "Automatically converts Apple Notes to PDF files",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "status": "bash scripts/status.sh"
+  },
+  "dependencies": {
+    "puppeteer": "^22.0.0",
+    "sanitize-html": "^2.13.0"
+  }
+}
