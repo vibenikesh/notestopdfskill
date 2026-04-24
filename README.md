@@ -132,7 +132,7 @@ Email is sent via the macOS `mail` command using your system Mail account. A sin
 
 **Notes:**
 - PDFs missing on disk are skipped with a warning; export continues with the valid subset.
-- Zip filename format: `notes-export-YYYY-MM-DD.zip`
+- Zip filename format: `notes-export-YYYY-MM-DD-HHmmss.zip` (timestamp prevents same-day overwrites)
 - Zip entries are stored as `FolderName/filename.pdf` to avoid cross-folder name collisions.
 - Output directory is created automatically if it does not exist.
 
