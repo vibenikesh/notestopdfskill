@@ -21,6 +21,50 @@ Runs every 15 minutes via macOS launchd and auto-starts on login. Handles create
 
 ---
 
+## Claude Code Skill
+
+You can use this tool as a `/notes-to-pdf` slash command inside Claude Code — no manual setup required.
+
+### Install the skill
+
+```bash
+mkdir -p ~/.claude/skills/notes-to-pdf
+curl -o ~/.claude/skills/notes-to-pdf/SKILL.md \
+  https://raw.githubusercontent.com/vibenikesh/notestopdfskill/main/skill/SKILL.md
+```
+
+### Usage
+
+```
+/notes-to-pdf                                        # Sync + export all → ~/Downloads/Notes to PDF
+/notes-to-pdf --folder Work                          # Export a specific folder
+/notes-to-pdf --folder Work Personal                 # Export multiple folders
+/notes-to-pdf --notes "Meeting Notes"                # Export a specific note
+/notes-to-pdf --all --email you@example.com          # Email all notes
+/notes-to-pdf --folder Work --out ~/Desktop/export   # Export folder to custom directory
+/notes-to-pdf --pdf-dir ~/Documents/Notes            # Generate PDFs into a custom directory
+/notes-to-pdf --folder Work --zip                    # Force zip for a single file
+```
+
+### What the skill does
+1. **Auto-installs** the tool to `~/notes-to-pdf` on first run (clones repo + runs `npm install`)
+2. **Syncs** all Apple Notes to PDFs (only changed notes are processed)
+3. **Exports** the selected PDFs to your chosen directory or email
+
+### Arguments
+
+| Argument | Description |
+|----------|-------------|
+| `--all` | Export all notes (default when no scope given) |
+| `--folder <name> [...]` | Export one or more folders by name |
+| `--notes <title> [...]` | Export specific notes by title |
+| `--out <dir>` | Export destination directory |
+| `--email <address>` | Send exported file via macOS Mail |
+| `--pdf-dir <dir>` | Directory where PDFs are generated and saved |
+| `--zip` | Force zip even for a single file |
+
+---
+
 ## Requirements
 
 - macOS (Apple Notes + AppleScript)

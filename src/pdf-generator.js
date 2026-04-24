@@ -3,7 +3,9 @@ const fs = require('fs');
 const path = require('path');
 const { buildHTML } = require('./template');
 
-const OUTPUT_ROOT = path.join(process.env.HOME, 'Downloads', 'Notes to PDF');
+const OUTPUT_ROOT = process.env.NOTES_PDF_DIR
+  ? path.resolve(process.env.NOTES_PDF_DIR)
+  : path.join(process.env.HOME, 'Downloads', 'Notes to PDF');
 
 function sanitizeFilename(name) {
   return name
