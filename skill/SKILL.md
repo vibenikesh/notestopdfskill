@@ -1,7 +1,7 @@
 ---
 name: notes-to-pdf
-description: Convert Apple Notes to PDFs and export them to a directory or via email. Syncs all notes first, then exports. Supports exporting all notes, specific folders, or specific note titles. Usage examples — export all: /notes-to-pdf, export folder: /notes-to-pdf --folder Work, email a folder: /notes-to-pdf --folder Work --email you@example.com, custom dirs: /notes-to-pdf --pdf-dir ~/Documents/Notes --out ~/Desktop/export
-argument-hint: [--all|--folder <name>|--notes <title>] [--out <dir>] [--email <addr>] [--pdf-dir <dir>] [--zip]
+description: Convert Apple Notes to PDFs and export them to a directory or via email. Syncs all notes first, then exports. Supports exporting all notes, specific folders, or specific note titles. Can also change how often the background sync runs. Usage examples — export all: /notes-to-pdf, export folder: /notes-to-pdf --folder Work, email a folder: /notes-to-pdf --folder Work --email you@example.com, change sync schedule: /notes-to-pdf --sync-interval "every night"
+argument-hint: [--all|--folder <name>|--notes <title>] [--out <dir>] [--email <addr>] [--pdf-dir <dir>] [--zip] [--sync-interval <interval>]
 allowed-tools: Bash
 ---
 
@@ -63,11 +63,15 @@ Parse the user arguments (if any):
 - `--notes <title> [<title2> ...]` → scope to specific note titles
 - `--all` → all notes
 - `--zip` → force zip for a single file
+- `--sync-interval <value>` → change how often the background sync runs (see Step 2a)
+
+Also watch for natural-language interval intent anywhere in the user's message, even without a flag — phrases like "sync every night", "run every 8 hours", "change background sync to 30 minutes", "make it run daily" all mean the user wants to update the schedule.
 
 Defaults when not specified:
 - PDF generation dir: `~/Downloads/Notes to PDF`
 - Export output dir: `~/Downloads/Notes to PDF`
 - Scope: all notes
+- Background sync interval: every 1 hour
 
 **If no arguments were given at all**, do NOT assume and do NOT just run everything silently. Instead, gently guide the user with warmth. Show them their options in a friendly, encouraging way. Example tone to use:
 
@@ -96,13 +100,35 @@ Never use negative language, never make the user feel guilty, and never express 
 
 ---
 
+### Step 2a — Handle sync interval change (if requested)
+
+If the user's message contains a sync interval request (via `--sync-interval` or natural language), run:
+
+```
+node ~/notes-to-pdf/scripts/set-sync-interval.js "<interval>"
+```
+
+Where `<interval>` is the value extracted from the user's message. Examples:
+- "every night" / "nightly" / "once a day" → `"nightly"`
+- "every 8 hours" / "8h" / "8 hours" → `"8h"`
+- "every 30 minutes" / "30m" → `"30m"`
+- "every hour" / "1h" → `"1h"`
+
+After running, confirm warmly:
+> "Done! Your background sync is now set to [what the script printed]. Your notes will stay up to date automatically."
+
+If the user **only** asked to change the sync interval (no export intent), stop here after confirming.
+If the user also wants to export notes, continue to Step 3.
+
+---
+
 ### Step 3 — Sync (generate/update PDFs)
 
 Let the user know you're getting started:
 > "Great choice! Syncing your notes now — this usually takes just a few seconds for changes, or a few minutes if it's your first time."
 
 Build the sync command:
-- If `--folder` was given, append `--folder "<name>"` to enable folder-level change detection
+- If `--folder` was given, append `--folder "<name>"` to detect folder-level changes before syncing
 - If `--pdf-dir` was given, set the env var
 
 Examples:
@@ -112,9 +138,9 @@ NOTES_PDF_DIR="<pdf-dir>" node ~/notes-to-pdf/src/index.js --folder "Work"
 node ~/notes-to-pdf/src/index.js
 ```
 
-**Important:** If the sync command exits with code 0 and its output contains "No changes in" — every note in the requested folder is already up to date. In that case:
+**Important:** If the sync command exits with code 0 and its output contains "No changes in" — that means every note in the requested folder is already up to date. In that case:
 1. Do NOT proceed to Step 4 (export).
-2. Relay the no-change message warmly to the user, for example:
+2. Echo the no-change message back to the user warmly, for example:
    > "Good news — nothing has changed in that folder since the last export! Your PDFs are already up to date. You can find them at: [path shown in the output]"
 3. Stop here.
 

@@ -197,6 +197,31 @@ By default, a single PDF is copied as-is. Use `--zip` if you always want a zip f
 
 ---
 
+### Change how often your notes sync in the background
+
+By default, your notes are synced to PDFs automatically every hour. You can change this at any time — just say it naturally or use the flag.
+
+```
+/notes-to-pdf --sync-interval "every night"
+/notes-to-pdf --sync-interval "8h"
+/notes-to-pdf --sync-interval "30m"
+/notes-to-pdf --sync-interval "1h"
+```
+
+You can also just say it naturally in plain English:
+```
+/notes-to-pdf sync every night
+/notes-to-pdf run background sync every 8 hours
+```
+
+**What happens:**
+- The background service schedule is updated immediately
+- "nightly" runs once a day at 2:00 AM
+- Your change is permanent until you change it again
+- You can combine this with an export in the same command: `/notes-to-pdf --folder Work --sync-interval "every night"`
+
+---
+
 ## Quick Reference
 
 | What you want | Command |
@@ -210,6 +235,8 @@ By default, a single PDF is copied as-is. Use `--zip` if you always want a zip f
 | Email a folder | `/notes-to-pdf --folder Work --email you@example.com` |
 | Custom PDF save location | `/notes-to-pdf --pdf-dir ~/Documents/Notes` |
 | Force zip for single file | `/notes-to-pdf --folder Work --zip` |
+| Change sync to nightly | `/notes-to-pdf --sync-interval "every night"` |
+| Change sync to every 8 hours | `/notes-to-pdf --sync-interval "8h"` |
 
 ---
 
@@ -224,6 +251,7 @@ By default, a single PDF is copied as-is. Use `--zip` if you always want a zip f
 | `--email <address>` | Email the export via macOS Mail |
 | `--pdf-dir <dir>` | Where to generate and store the PDF files |
 | `--zip` | Force a zip file even when exporting a single note |
+| `--sync-interval <value>` | Change how often the background sync runs (`"1h"`, `"8h"`, `"nightly"`, `"30m"`) |
 
 ---
 

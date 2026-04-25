@@ -37,14 +37,17 @@ curl -o ~/.claude/skills/notes-to-pdf/SKILL.md \
 ### Usage
 
 ```
-/notes-to-pdf                                        # Sync + export all → ~/Downloads/Notes to PDF
-/notes-to-pdf --folder Work                          # Export a specific folder
-/notes-to-pdf --folder Work Personal                 # Export multiple folders
-/notes-to-pdf --notes "Meeting Notes"                # Export a specific note
-/notes-to-pdf --all --email you@example.com          # Email all notes
-/notes-to-pdf --folder Work --out ~/Desktop/export   # Export folder to custom directory
-/notes-to-pdf --pdf-dir ~/Documents/Notes            # Generate PDFs into a custom directory
-/notes-to-pdf --folder Work --zip                    # Force zip for a single file
+/notes-to-pdf                                             # Sync + export all → ~/Downloads/Notes to PDF
+/notes-to-pdf --folder Work                               # Export a specific folder
+/notes-to-pdf --folder Work Personal                      # Export multiple folders
+/notes-to-pdf --notes "Meeting Notes"                     # Export a specific note
+/notes-to-pdf --all --email you@example.com               # Email all notes
+/notes-to-pdf --folder Work --out ~/Desktop/export        # Export folder to custom directory
+/notes-to-pdf --pdf-dir ~/Documents/Notes                 # Generate PDFs into a custom directory
+/notes-to-pdf --folder Work --zip                         # Force zip for a single file
+/notes-to-pdf --sync-interval "every night"               # Change background sync to nightly at 2 AM
+/notes-to-pdf --sync-interval "8h"                        # Change background sync to every 8 hours
+/notes-to-pdf --sync-interval "30m"                       # Change background sync to every 30 minutes
 ```
 
 ### What the skill does
@@ -63,6 +66,7 @@ curl -o ~/.claude/skills/notes-to-pdf/SKILL.md \
 | `--email <address>` | Send exported file via macOS Mail |
 | `--pdf-dir <dir>` | Directory where PDFs are generated and saved |
 | `--zip` | Force zip even for a single file |
+| `--sync-interval <value>` | Change how often the background sync runs (e.g. `"1h"`, `"8h"`, `"nightly"`, `"30m"`) |
 
 ---
 
@@ -213,6 +217,7 @@ Sync complete in Xs — Created: N | Updated: N | Renamed: N | Deleted: N | Skip
 
 ## Performance
 
+- **Background sync**: every 1 hour by default (configurable via `--sync-interval`)
 - **First run**: ~8 minutes (all notes read and PDFs generated)
 - **Subsequent runs**: 5–12 seconds (only changed notes processed)
 - AppleScript reads metadata in batch — avoids per-note loops that took 6+ minutes
