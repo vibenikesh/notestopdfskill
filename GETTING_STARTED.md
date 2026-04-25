@@ -208,15 +208,25 @@ By default, your notes are synced to PDFs automatically every hour. You can chan
 /notes-to-pdf --sync-interval "1h"
 ```
 
-You can also just say it naturally in plain English:
+You can also specify **multiple exact times** each day:
+
+```
+/notes-to-pdf --sync-interval "daily at 5am, 9am, 11am and 9pm"
+/notes-to-pdf --sync-interval "5am 9am 11am 9pm"
+/notes-to-pdf --sync-interval "9:30am 3pm"
+```
+
+Or just say it naturally in plain English:
 ```
 /notes-to-pdf sync every night
 /notes-to-pdf run background sync every 8 hours
+/notes-to-pdf sync daily at 5am, 9am, 11am and 9pm
 ```
 
 **What happens:**
 - The background service schedule is updated immediately
 - "nightly" runs once a day at 2:00 AM
+- Multiple times run independently — each fires at its scheduled hour
 - Your change is permanent until you change it again
 - You can combine this with an export in the same command: `/notes-to-pdf --folder Work --sync-interval "every night"`
 
@@ -237,6 +247,7 @@ You can also just say it naturally in plain English:
 | Force zip for single file | `/notes-to-pdf --folder Work --zip` |
 | Change sync to nightly | `/notes-to-pdf --sync-interval "every night"` |
 | Change sync to every 8 hours | `/notes-to-pdf --sync-interval "8h"` |
+| Sync at specific times daily | `/notes-to-pdf --sync-interval "5am 9am 11am 9pm"` |
 
 ---
 
@@ -262,6 +273,9 @@ No. The skill installs everything automatically on first run (Node.js must alrea
 
 **Will it overwrite my existing PDFs?**
 Only if a note has changed since the last run. Unchanged notes are skipped.
+
+**Can I schedule syncs at specific times of day?**
+Yes — you can list as many times as you like: `/notes-to-pdf --sync-interval "5am 9am 11am 9pm"` or say it naturally: "sync daily at 5am, 9am, 11am and 9pm". Times with minutes work too: `"9:30am 3pm"`.
 
 **What if I run the same folder export twice and nothing changed?**
 The skill detects this automatically. Instead of re-syncing, it shows you a message like "No changes in 'Work' — all notes are up to date" and tells you exactly where your PDFs already are. No waiting.

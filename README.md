@@ -48,6 +48,8 @@ curl -o ~/.claude/skills/notes-to-pdf/SKILL.md \
 /notes-to-pdf --sync-interval "every night"               # Change background sync to nightly at 2 AM
 /notes-to-pdf --sync-interval "8h"                        # Change background sync to every 8 hours
 /notes-to-pdf --sync-interval "30m"                       # Change background sync to every 30 minutes
+/notes-to-pdf --sync-interval "5am 9am 11am 9pm"          # Sync at specific times each day
+/notes-to-pdf --sync-interval "daily at 5am, 9am and 9pm" # Natural language, multiple times
 ```
 
 ### What the skill does
@@ -66,7 +68,7 @@ curl -o ~/.claude/skills/notes-to-pdf/SKILL.md \
 | `--email <address>` | Send exported file via macOS Mail |
 | `--pdf-dir <dir>` | Directory where PDFs are generated and saved |
 | `--zip` | Force zip even for a single file |
-| `--sync-interval <value>` | Change how often the background sync runs (e.g. `"1h"`, `"8h"`, `"nightly"`, `"30m"`) |
+| `--sync-interval <value>` | Change background sync schedule — e.g. `"1h"`, `"8h"`, `"nightly"`, `"30m"`, `"5am 9am 9pm"` |
 
 ---
 

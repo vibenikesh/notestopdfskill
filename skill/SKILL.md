@@ -113,6 +113,10 @@ Where `<interval>` is the value extracted from the user's message. Examples:
 - "every 8 hours" / "8h" / "8 hours" → `"8h"`
 - "every 30 minutes" / "30m" → `"30m"`
 - "every hour" / "1h" → `"1h"`
+- "daily at 5am, 9am, 11am and 9pm" → `"5am 9am 11am 9pm"`
+- "sync at 9:30am and 3pm" → `"9:30am 3pm"`
+
+Pass the extracted times as a single quoted string — the script handles all parsing.
 
 After running, confirm warmly:
 > "Done! Your background sync is now set to [what the script printed]. Your notes will stay up to date automatically."
