@@ -101,15 +101,22 @@ Never use negative language, never make the user feel guilty, and never express 
 Let the user know you're getting started:
 > "Great choice! Syncing your notes now — this usually takes just a few seconds for changes, or a few minutes if it's your first time."
 
-Run the sync. If `--pdf-dir` was given, set the env var:
-```
-NOTES_PDF_DIR="<pdf-dir>" node ~/notes-to-pdf/src/index.js
-```
+Build the sync command:
+- If `--folder` was given, append `--folder "<name>"` to enable folder-level change detection
+- If `--pdf-dir` was given, set the env var
 
-If no `--pdf-dir`:
+Examples:
 ```
+node ~/notes-to-pdf/src/index.js --folder "Work"
+NOTES_PDF_DIR="<pdf-dir>" node ~/notes-to-pdf/src/index.js --folder "Work"
 node ~/notes-to-pdf/src/index.js
 ```
+
+**Important:** If the sync command exits with code 0 and its output contains "No changes in" — every note in the requested folder is already up to date. In that case:
+1. Do NOT proceed to Step 4 (export).
+2. Relay the no-change message warmly to the user, for example:
+   > "Good news — nothing has changed in that folder since the last export! Your PDFs are already up to date. You can find them at: [path shown in the output]"
+3. Stop here.
 
 ---
 

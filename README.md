@@ -11,6 +11,7 @@ Runs every 15 minutes via macOS launchd and auto-starts on login. Handles create
 - Converts all Apple Notes to PDFs automatically
 - Preserves Notes folder structure on disk
 - Detects and syncs: new notes, edits, renames, folder moves, and deletes
+- Smart no-change detection per folder — skips sync and shows the existing PDF path when nothing has changed
 - Extracts `#hashtag` tags from note body and renders them as chips in the PDF
 - Embeds images (base64 data URIs) with 200MB buffer and 60s timeout protection
 - Clickable hyperlinks preserved in PDF output
@@ -104,6 +105,9 @@ PDFs will be written to `~/Downloads/Notes to PDF/`, mirroring your Notes folder
 ```bash
 # Force a sync right now
 node src/index.js
+
+# Sync with folder-level change detection (skips sync + shows PDF path if nothing changed)
+node src/index.js --folder "Work"
 
 # Check service health + recent logs
 bash scripts/status.sh

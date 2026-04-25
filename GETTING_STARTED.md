@@ -63,6 +63,7 @@ You have a Notes folder called "Work" and want just those notes as PDFs.
 **What happens:**
 - Only notes inside your "Work" folder are exported
 - A zip file is created if there are 2 or more notes
+- **If you run this again and nothing has changed**, the skill skips the sync entirely and tells you exactly where your existing PDFs already are — no waiting, no re-processing
 
 ---
 
@@ -233,6 +234,9 @@ No. The skill installs everything automatically on first run (Node.js must alrea
 
 **Will it overwrite my existing PDFs?**
 Only if a note has changed since the last run. Unchanged notes are skipped.
+
+**What if I run the same folder export twice and nothing changed?**
+The skill detects this automatically. Instead of re-syncing, it shows you a message like "No changes in 'Work' — all notes are up to date" and tells you exactly where your PDFs already are. No waiting.
 
 **What if a note title has spaces?**
 Wrap it in quotes: `--notes "My Note Title"`.

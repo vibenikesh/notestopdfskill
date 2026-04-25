@@ -25,6 +25,10 @@ function cleanupEmptyFolder(folderPath) {
   }
 }
 
+// Parse optional --folder <name> CLI argument
+const folderArgIdx = process.argv.indexOf('--folder');
+const folderFilter = folderArgIdx !== -1 ? process.argv[folderArgIdx + 1] : null;
+
 async function run() {
   const startTime = Date.now();
   logger.info('Notes to PDF — sync started');
@@ -49,6 +53,31 @@ async function run() {
   const folderNames = Object.keys(folders);
   const totalNotes = folderNames.reduce((sum, f) => sum + folders[f].length, 0);
   logger.info(`Found ${totalNotes} notes across ${folderNames.length} folders`);
+
+  // ── Folder-scoped no-change check ─────────────────────────────────────────
+  if (folderFilter) {
+    const matchingFolder = folderNames.find(
+      f => f.toLowerCase() === folderFilter.toLowerCase()
+    );
+    if (matchingFolder) {
+      const notesInFolder = folders[matchingFolder];
+      const anyChanged = notesInFolder.some(({ id, name, modDate }) => {
+        const entry = getEntry(state, id);
+        return hasContentChanged(entry, modDate) || hasLocationChanged(entry, matchingFolder, name);
+      });
+      if (!anyChanged) {
+        const OUTPUT_ROOT = path.join(process.env.HOME, 'Downloads', 'Notes to PDF');
+        const folderPdfPath = path.join(OUTPUT_ROOT, matchingFolder);
+        const noteCount = notesInFolder.length;
+        console.log('');
+        console.log(`✓ No changes in "${matchingFolder}" — all ${noteCount} note${noteCount !== 1 ? 's' : ''} are up to date.`);
+        console.log(`  Your PDFs are available at: ${folderPdfPath}`);
+        console.log('');
+        logger.info(`No-change check: folder "${matchingFolder}" — ${noteCount} notes unchanged, skipping sync.`);
+        process.exit(0);
+      }
+    }
+  }
 
   for (const folderName of folderNames) {
     for (const noteMeta of folders[folderName]) {
